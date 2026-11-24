@@ -1,0 +1,88 @@
+
+import React, { useState } from "react";
+import "./App.css";
+
+function App() {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: ""
+  });
+
+  const [success, setSuccess] = useState(false);
+
+  const errors = {
+    name: form.name.trim() ? "" : "Name is required",
+    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)
+      ? "" : "Enter a valid email",
+    password: form.password.length >= 6
+      ? "" : "Password must be at least 6 characters"
+  };
+
+  const isValid = Object.values(errors).every(error => !error);
+
+  function handleChange(e) {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (isValid) setSuccess(true);
+  }
+
+  function resetForm() {
+    setForm({ name: "", email: "", password: "" });
+    setSuccess(false);
+  }
+
+  if (success) {
+    return (
+      <div className="container">
+        <h1>Success!</h1>
+        <p>Your form has been submitted successfully.</p>
+        <button onClick={resetForm}>Go Back</button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container">
+      <h1>Registration Form</h1>
+
+      <form onSubmit={handleSubmit}>
+        <input
+          name="name"
+          placeholder="Enter name"
+          value={form.name}
+          onChange={handleChange}
+        />
+        {form.name && errors.name && <p>{errors.name}</p>}
+
+        <input
+          name="email"
+          placeholder="Enter email"
+          value={form.email}
+          onChange={handleChange}
+        />
+        {form.email && errors.email && <p>{errors.email}</p>}
+
+        <input
+          name="password"
+          type="password"
+          placeholder="Enter password"
+          value={form.password}
+          onChange={handleChange}
+        />
+        {form.password && errors.password && (
+          <p>{errors.password}</p>
+        )}
+
+        <button type="submit" disabled={!isValid}>
+          Submit
+        </button>
+      </form>
+    </div>
+  );
+}
+
+export default App;
